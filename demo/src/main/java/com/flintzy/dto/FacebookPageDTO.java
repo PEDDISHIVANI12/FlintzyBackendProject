@@ -1,0 +1,11 @@
+package com.flintzy.dto;
+
+import lombok.Data;
+
+@Data
+public class FacebookPageDTO {
+    private String pageId;
+    private String pageName;
+    private String accessToken;
+    private Long expiresIn;
+}

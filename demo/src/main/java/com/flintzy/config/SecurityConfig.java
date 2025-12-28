@@ -34,6 +34,7 @@ public class SecurityConfig {
                                  "/login/**",
                                  "/oauth2/authorization/**",
                                  "/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/facebook/**").authenticated()
                         .anyRequest().authenticated()
                 ).oauth2Login(oauth -> 
                 oauth.defaultSuccessUrl("/auth/oauth-success", true)

@@ -19,9 +19,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    private Long appUserId;
     private String email;
     private String name;
-    private String provider; 
 }

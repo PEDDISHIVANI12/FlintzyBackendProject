@@ -5,16 +5,21 @@ import com.flintzy.dto.JwtResponse;
 import com.flintzy.entity.User;
 import com.flintzy.repo.UserRepo;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/auth")
 public class AuthController {
 	
@@ -25,18 +30,24 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @GetMapping("/oauth-success")
-    public Map<String, String> oauthSuccess(@AuthenticationPrincipal OAuth2User user) {
-
+    public String oauthSuccess(@AuthenticationPrincipal OAuth2User user,HttpServletResponse response) {
         String email = user.getAttribute("email");
-
-        String token = jwtUtil.generateToken(email);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "OAuth login successful");
-        response.put("email", email);
-        response.put("jwt", token);
-
-        return response;
+        String name = user.getAttribute("name");
+        User existingUser = userRepo.findByEmail(email);
+        if (existingUser == null) {
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setName(name);
+            userRepo.save(newUser);
+        }
+        String jwt = jwtUtil.generateToken(email);
+        Cookie cookie = new Cookie("jwt",jwt);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(24 * 60 * 60);
+        response.addCookie(cookie);
+        return "redirect:/facebook/login";
     }
+
 
 }
