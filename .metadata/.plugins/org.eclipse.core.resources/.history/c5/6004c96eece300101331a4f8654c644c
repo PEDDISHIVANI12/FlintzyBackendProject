@@ -1,7 +1,0 @@
-package com.flintzy.repo;
-
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface FacebookPostRepo extends JpaRepository<FacebookPost, Long> {}
-

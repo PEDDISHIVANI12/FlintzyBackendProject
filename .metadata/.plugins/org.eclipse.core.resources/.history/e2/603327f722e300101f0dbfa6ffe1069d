@@ -1,7 +1,0 @@
-package com.flintzy.dto;
-
-@Data
-@AllArgsConstructor
-public class JwtResponse {
-    private String token;
-}

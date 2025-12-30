@@ -1,5 +1,0 @@
-package com.flintzy.social.config;
-
-public class JwtFilter {
-
-}
