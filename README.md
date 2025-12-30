@@ -305,3 +305,14 @@ curl -X POST http://localhost:8080/facebook/save-pages \
 | caption          | TEXT        |
 | mediaType        | VARCHAR     |
 | createdAt        | DATETIME   |
+
+
+### ⚠ Database Dump Notice
+
+The SQL files included in this repository contain:
+- Full database schema
+- Sanitized sample data only
+
+No real user data, access tokens, OAuth secrets, or credentials are included.
+All sensitive values have been masked for security reasons.
+
