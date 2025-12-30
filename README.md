@@ -247,17 +247,30 @@ curl -X GET http://localhost:8080/facebook/pages \
 ```bash
 curl -X POST http://localhost:8080/facebook/save-pages \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer <TOKEN>" \
 -d '{
   "pages": [
     {
       "pageId": "123",
       "pageName": "Test Page",
-      "accessToken": "TOKEN"
+      "accessToken": "PAGE_ACCESS_TOKEN"
     }
   ]
 }'
 ```
-
+### Post Image to Facebook Page
+```bash
+curl -X POST "http://localhost:8080/facebook/post-text?pageId=123456789&message=Hello+from+Flintzy+Backend!" \
+  -H "Authorization: Bearer <JWT_TOKEN>"
+```
+### Post Image to Facebook Page
+```bash
+curl -X POST http://localhost:8080/facebook/post-image \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -F "pageId=123456789" \
+  -F "file=@/path/to/image.jpg" \
+  -F "caption=Posting image from Flintzy Backend"
+```
 ---
 
  Database Schema
