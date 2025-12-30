@@ -61,7 +61,6 @@ Spring Boot 3, OAuth2, Spring Security, JPA, JWT, AES Encryption
 
 ### 🔁 Token Expiry Management
 - Facebook user token expiry tracking
-- Facebook page token expiry tracking
 
 ---
 
@@ -172,6 +171,8 @@ src/main/java/com/flintzy
 │   ├── FacebookUserRepo.java
 │   ├── FacebookPageRepo.java
 │   ├── FacebookPostRepo.java
+
+
 ```
 
 ---
@@ -256,27 +257,51 @@ curl -X POST http://localhost:8080/facebook/save-pages \
 
 ---
 
-## 🗄 Database Schema
+ Database Schema
 
-### User
-| Field | Type |
-|-----|------|
-| appUserId | BIGINT |
-| email | VARCHAR |
-| name | VARCHAR |
+### 🧑 User
+| Field       | Type    |
+|------------|---------|
+| appUserId  | BIGINT  |
+| email      | VARCHAR |
+| name       | VARCHAR |
 
-### FacebookUser
-| Field | Type |
-|------|------|
-| facebookUserId | VARCHAR |
-| appUserId | BIGINT |
-| accessToken | TEXT (encrypted) |
-| expirySeconds | INT |
+---
 
-### FacebookPage
-| Field | Type |
-|------|------|
-| pageId | VARCHAR |
-| pageName | VARCHAR |
-| accessToken | TEXT (encrypted) |
-| appUserId | BIGINT |
+### 🔵 FacebookUser
+| Field           | Type              |
+|----------------|-------------------|
+| id             | BIGINT (PK)       |
+| facebookUserId | VARCHAR           |
+| appUserId      | BIGINT (FK)       |
+| accessToken    | TEXT (Encrypted)  |
+| expirySeconds  | INT               |
+| expiryTime     | DATETIME          |
+| lastUpdated    | DATETIME          |
+
+---
+
+### 📄 FacebookPage
+| Field           | Type              |
+|----------------|-------------------|
+| id             | BIGINT (PK)       |
+| pageId         | VARCHAR           |
+| pageName       | VARCHAR           |
+| accessToken    | TEXT (Encrypted)  |
+| facebookUserId | VARCHAR           |
+| appUserId      | BIGINT (FK)       |
+| lastUpdated    | DATETIME          |
+
+---
+
+### 📝 FacebookPost
+| Field            | Type        |
+|------------------|-------------|
+| id               | BIGINT (PK) |
+| pageId           | VARCHAR     |
+| appUserId        | BIGINT (FK) |
+| facebookUserId   | VARCHAR     |
+| facebookPostId   | VARCHAR     |
+| caption          | TEXT        |
+| mediaType        | VARCHAR     |
+| createdAt        | DATETIME   |
