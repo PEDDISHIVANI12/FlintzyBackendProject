@@ -7,7 +7,6 @@ import java.util.Base64;
 
 public class AESEncryptor {
 
-    // MUST BE 16, 24, or 32 characters long → 32 chars = AES-256
     private static final String SECRET_KEY = "12345678901234567890123456789012";
 
     public static String encrypt(String plainText) {
