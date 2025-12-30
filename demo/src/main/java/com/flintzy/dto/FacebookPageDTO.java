@@ -6,5 +6,5 @@ import lombok.Data;
 public class FacebookPageDTO {
     private String pageId;
     private String pageName;
-    private String accessToken;
+    private String pageAccessToken;
 }
