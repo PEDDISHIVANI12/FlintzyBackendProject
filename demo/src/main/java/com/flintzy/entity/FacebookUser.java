@@ -16,12 +16,12 @@ public class FacebookUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long appUserId; // Google userId (from your User table)
+    private Long appUserId; 
 
-    private String facebookUserId; // ID from "https://graph.facebook.com/me"
+    private String facebookUserId; 
 
     @Column(columnDefinition = "TEXT")
-    private String accessToken; // ENCRYPTED user access token
+    private String accessToken; 
 
     private Long expirySeconds;
 
