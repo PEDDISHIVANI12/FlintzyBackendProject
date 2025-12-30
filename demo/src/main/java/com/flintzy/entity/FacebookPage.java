@@ -17,8 +17,8 @@ public class FacebookPage {
     private String pageId;
     private String pageName;
     @Column(columnDefinition = "TEXT")
-    private String accessToken;   // ENCRYPTED Page Token
-    private Long appUserId;       // Google user ID
-    private String facebookUserId; // FB User ID
+    private String pageAccessToken;  
+    private Long appUserId;       
+    private String facebookUserId; 
     private LocalDateTime lastUpdated;
 }
