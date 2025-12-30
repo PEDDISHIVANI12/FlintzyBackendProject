@@ -21,10 +21,8 @@ public class FacebookPost {
     private String pageId;        
     private Long appUserId;  
     private String facebookUserId;
-    private String message;       
     private String facebookPostId; 
     private String caption;
     private String mediaType;
-    private String mediaURL;
     private LocalDateTime createdAt;
 }
