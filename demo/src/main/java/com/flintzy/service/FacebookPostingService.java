@@ -1,5 +1,4 @@
 package com.flintzy.service;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -43,13 +42,13 @@ public class FacebookPostingService {
         FacebookPage page = pageRepo.findById(pageId)
                 .orElseThrow(() -> new RuntimeException("Page not found"));
 
-        FacebookUser fbUser = facebookUserRepo.findByFacebookUserId(page.getFacebookUserId());
+        FacebookUser fbUser = facebookUserRepo.findTopByFacebookUserIdOrderByLastUpdatedDesc(page.getFacebookUserId(),page.getAppUserId());
 
         if (tokenService.isUserTokenExpired(fbUser)) {
             throw new RuntimeException("Facebook session expired. Please login again.");
         }
 
-        String token = AESEncryptor.decrypt(page.getAccessToken());
+        String token = AESEncryptor.decrypt(page.getPageAccessToken());
         RestTemplate rest = new RestTemplate();
         System.out.println(message);
         String url = "https://graph.facebook.com/" + pageId +
@@ -61,6 +60,7 @@ public class FacebookPostingService {
         // Save post history
         FacebookPost post = new FacebookPost();
         post.setPageId(pageId);
+        post.setFacebookUserId(page.getFacebookUserId());
         post.setAppUserId(page.getAppUserId());
         post.setCaption(message);
         post.setFacebookPostId((String) res.get("id"));
@@ -79,12 +79,12 @@ public class FacebookPostingService {
         FacebookPage page = pageRepo.findById(pageId)
                 .orElseThrow(() -> new RuntimeException("Page not found"));
        
-        FacebookUser fbUser = facebookUserRepo.findByFacebookUserId(page.getFacebookUserId());
+        FacebookUser fbUser = facebookUserRepo.findTopByFacebookUserIdOrderByLastUpdatedDesc(page.getFacebookUserId(),page.getAppUserId());
 
         if (tokenService.isUserTokenExpired(fbUser)) {
             throw new RuntimeException("Facebook session expired. Please login again.");
         }
-        String token = AESEncryptor.decrypt(page.getAccessToken());
+        String token = AESEncryptor.decrypt(page.getPageAccessToken());
 
         RestTemplate rest = new RestTemplate();
 
