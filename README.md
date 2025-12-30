@@ -213,16 +213,19 @@ Authorization: Bearer <JWT>
 ### 🔹 Save Pages
 ```
 POST /facebook/save-pages
+Authorization: Bearer <JWT>
 ```
 
 ### 🔹 Post Text
 ```
 POST /facebook/post-text?pageId={PAGE_ID}&message=Hello
+Authorization: Bearer <JWT>
 ```
 
 ### 🔹 Post Image
 ```
 POST /facebook/post-image
+Authorization: Bearer <JWT>
 ```
 
 ---
