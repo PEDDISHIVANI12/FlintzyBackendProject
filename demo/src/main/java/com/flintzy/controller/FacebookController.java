@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.flintzy.dto.FacebookPageDTO;
 import com.flintzy.dto.FacebookPageRequest;
@@ -124,15 +125,7 @@ public class FacebookController {
 		    
 		    Map<String, Object> response = rest.getForObject(url, Map.class);
 		    
-		    if (response.containsKey("data")) {
-		        List<Map<String, Object>> data = (List<Map<String, Object>>) response.get("data");
-
-		        for (Map<String, Object> page : data) {
-		            if (page.containsKey("access_token")) {
-		                page.remove("access_token");
-		            }
-		        }
-		    }
+		   
 		    return ResponseEntity.ok(response);
 		
 
@@ -140,13 +133,13 @@ public class FacebookController {
 
 
 	@GetMapping("/callback")
-	public ResponseEntity<?> facebookCallback(
+	public RedirectView facebookCallback(
 			@RequestParam("code") String code,
 			@RequestParam("state") Long appUserId) {
 		
 		User user = getAuthenticatedUser();
 	    if (user == null) {
-	        return ResponseEntity.status(401).body("Login required");
+	        return new RedirectView("/facebook/login");
 	    }
 
 		RestTemplate rest = new RestTemplate();
@@ -172,7 +165,7 @@ public class FacebookController {
 			fbUser = new FacebookUser();
 			fbUser.setAppUserId(appUserId);
 			fbUser.setFacebookUserId(facebookUserId);
-			fbUser.setExpirySeconds(expirySeconds);   // <-- USE PROPERTY VALUE
+			fbUser.setExpirySeconds(expirySeconds);
 		    fbUser.setExpiryTime(LocalDateTime.now().plusSeconds(expirySeconds));
 		}
 
@@ -181,7 +174,7 @@ public class FacebookController {
 
 		facebookUserRepo.save(fbUser);
 
-		return ResponseEntity.ok("Facebook connected successfully!");
+		return new RedirectView("/facebook/pages");
 	}
 
 
@@ -223,10 +216,10 @@ public class FacebookController {
 		for (FacebookPageDTO p : request.getPages()) {
 
 			FacebookPage page = pageRepo.findById(p.getPageId()).orElse(new FacebookPage());
-
+			String pageAccessToken = p.getPageAccessToken();
 			page.setPageId(p.getPageId());
 			page.setPageName(p.getPageName());
-			page.setAccessToken(fbUser.getAccessToken());
+			page.setPageAccessToken(AESEncryptor.encrypt(pageAccessToken));
 			page.setAppUserId(appUserId);
 			page.setFacebookUserId(facebookUserId);
 			page.setLastUpdated(LocalDateTime.now());
