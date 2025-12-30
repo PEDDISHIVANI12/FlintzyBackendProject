@@ -17,7 +17,7 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtUtil {
 
-	private final String SECRET_KEY = "uA6vWUTXbYJvLmariFvR8TqBZC7cxTQK5U6vN2R2f8s=";
+	private final String SECRET_KEY = "XyZp7V2B3V0s8vK4HPx93Fk90ABCD123efGHIJKLmno=";
     
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);

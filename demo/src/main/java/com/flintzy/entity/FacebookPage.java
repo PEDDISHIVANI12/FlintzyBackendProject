@@ -20,7 +20,5 @@ public class FacebookPage {
     private String accessToken;   // ENCRYPTED Page Token
     private Long appUserId;       // Google user ID
     private String facebookUserId; // FB User ID
-    private Long expiresIn;
     private LocalDateTime lastUpdated;
-    private LocalDateTime expiryTime;
 }

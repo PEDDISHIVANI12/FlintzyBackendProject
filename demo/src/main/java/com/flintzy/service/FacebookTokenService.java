@@ -5,19 +5,13 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import com.flintzy.entity.FacebookPage;
+import com.flintzy.entity.FacebookUser;
 
 @Service
 public class FacebookTokenService {
 
-    public boolean isTokenExpired(FacebookPage page) {
-
-        if (page.getExpiresIn() == 0) {
-            return false; 
-        }
-
-        LocalDateTime expiryTime =
-                page.getLastUpdated().plusSeconds(page.getExpiresIn());
-
-        return LocalDateTime.now().isAfter(expiryTime);
-    }
+	public boolean isUserTokenExpired(FacebookUser u) {
+	    if (u.getExpiryTime() == null) return true;
+	    return LocalDateTime.now().isAfter(u.getExpiryTime());
+	}
 }

@@ -1,0 +1,45 @@
+package com.flintzy.controller;
+
+import com.flintzy.config.JwtUtil;
+import com.flintzy.dto.JwtResponse;
+import com.flintzy.entity.User;
+import com.flintzy.repo.UserRepo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+	
+	@Autowired
+	private UserRepo userRepo;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @PostMapping("/login")
+    public String login(@RequestParam String email) {
+        return jwtUtil.generateToken(email);
+    }
+    @GetMapping("/auth/oauth-success")
+    public JwtResponse oauthSuccess(OAuth2AuthenticationToken token) {
+
+        String email = token.getPrincipal().getAttribute("email");
+        String name = token.getPrincipal().getAttribute("name");
+        console.log("hello");
+        // Save / update user in DB
+       User user = userRepo.findByEmail(email)
+			        .orElse(new User(null,email, name, "GOOGLE"));
+
+        userRepo.save(user);
+
+        // Generate JWT for this user
+        String jwt = jwtUtil.generateToken(email);
+
+        return new JwtResponse(jwt);
+    }
+
+
+}

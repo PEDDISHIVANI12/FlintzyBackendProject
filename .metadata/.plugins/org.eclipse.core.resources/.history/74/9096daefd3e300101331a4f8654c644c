@@ -1,0 +1,9 @@
+package com.flintzy.dto;
+
+import lombok.Data;
+
+@Data
+public class PostRequest {
+	private long pageId;
+	private String message;
+}

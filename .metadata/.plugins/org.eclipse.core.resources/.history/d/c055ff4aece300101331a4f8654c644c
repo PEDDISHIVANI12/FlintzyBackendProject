@@ -1,0 +1,5 @@
+package com.flintzy.entity;
+
+public class FacebookPost {
+
+}

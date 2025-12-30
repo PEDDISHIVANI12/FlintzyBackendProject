@@ -1,0 +1,8 @@
+package com.flintzy.dto;
+
+public class FacebookPageDTO {
+    private String pageId;
+    private String pageName;
+    private String accessToken;
+    private Long expiresIn;
+}

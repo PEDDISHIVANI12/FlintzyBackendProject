@@ -1,0 +1,20 @@
+package com.flintzy.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "facebook_pages")
+public class FacebookPage {
+
+    @Id
+    private String pageId;
+    private String pageName;
+    private String accessToken;
+    private Long userId;   
+    private Long expiresIn;
+    private LocalDateTime lastUpdated;
+}

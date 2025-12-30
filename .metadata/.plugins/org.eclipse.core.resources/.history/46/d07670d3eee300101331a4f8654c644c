@@ -1,0 +1,5 @@
+package com.flintzy.security;
+
+public class AESEncryptor {
+
+}

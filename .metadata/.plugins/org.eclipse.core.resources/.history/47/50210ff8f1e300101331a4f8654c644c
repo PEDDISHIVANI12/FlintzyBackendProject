@@ -1,0 +1,26 @@
+package com.flintzy.entity;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Entity
+@Table(name = "facebook_posts")
+@Data
+public class FacebookPost {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String pageId;        // Which FB page?
+    private Long userId;          // Which logged-in user?
+    private String message;       // Message posted
+    private String facebookPostId; // FB Graph API returned post_id
+    private LocalDateTime createdAt;
+}

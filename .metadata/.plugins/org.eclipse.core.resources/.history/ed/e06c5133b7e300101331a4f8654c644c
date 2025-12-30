@@ -1,0 +1,8 @@
+package com.flintzy.dto;
+
+import java.util.List;
+
+public class FacebookPageRequest {
+    private Long userId;
+    private List<FacebookPageDTO> pages;
+}

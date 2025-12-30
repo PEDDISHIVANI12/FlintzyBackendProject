@@ -2,6 +2,7 @@ package com.flintzy.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,13 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
     	String path = request.getServletPath();
         return path.startsWith("/auth/")
+        		||path.startsWith("/auth/oauth-success")
                 || path.startsWith("/oauth2/")
+                || path.startsWith("/facebook/callback") 
                 || path.startsWith("/login/")
                 || path.startsWith("/error")
-                || path.equals("/")
-                || path.contains("oauth");
-    }
+                || path.equals("/");
+        }
 
     @Override
     protected void doFilterInternal(
@@ -40,15 +42,24 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String email = null;
         String token = null;
-
         // Format: "Bearer <token>"
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            email = jwtUtil.extractEmail(token);
         }
+        if (token == null && request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals("JWT_TOKEN")) {
+                    token = cookie.getValue();
+                }
+            }
+        }
+        if (jwtUtil.validateToken(token)) {
+                email = jwtUtil.extractEmail(token);
+            }
+        
 
         // If token valid → set authentication
-        if (email != null && jwtUtil.validateToken(token)) {
+        if (email != null) {
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(email, null, null);

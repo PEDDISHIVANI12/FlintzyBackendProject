@@ -1,0 +1,7 @@
+package com.flintzy.repo;
+
+@Repository
+public interface FacebookPageRepo extends JpaRepository<FacebookPage, String> {
+    List<FacebookPage> findByUserId(Long userId);
+}
+

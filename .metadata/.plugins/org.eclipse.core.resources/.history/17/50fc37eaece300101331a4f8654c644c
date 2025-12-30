@@ -1,0 +1,39 @@
+package com.flintzy.service;
+
+
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.flintzy.dto.PostRequest;
+import com.flintzy.entity.FacebookPage;
+import com.flintzy.repo.FacebookPageRepo;
+
+@Service
+public class FacebookService {
+
+    @Autowired
+    private FacebookPageRepo pageRepo;
+
+    public String publishPost(PostRequest req) {
+
+    	Optional<FacebookPage> pageOpt = pageRepo.findById(req.getPageId());
+
+    	if (!pageOpt.isPresent()) {
+    	    throw new RuntimeException("Invalid pageId: Page not found in DB");
+    	}
+
+    	FacebookPage page = pageOpt.get();
+        String pageToken = page.getAccessToken();
+
+        String url = "https://graph.facebook.com/" + req.getPageId() +
+                     "/feed?message=" + req.getMessage() +
+                     "&access_token=" + pageToken;
+
+        RestTemplate rest = new RestTemplate();
+        return rest.postForObject(url, null, String.class);
+    }
+}

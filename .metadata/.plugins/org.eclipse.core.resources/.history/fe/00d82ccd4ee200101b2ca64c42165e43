@@ -1,0 +1,5 @@
+package com.flintzy.social.controller;
+
+public class AuthController {
+
+}

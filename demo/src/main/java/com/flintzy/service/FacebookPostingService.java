@@ -1,5 +1,7 @@
 package com.flintzy.service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -14,21 +16,26 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.flintzy.entity.FacebookPage;
 import com.flintzy.entity.FacebookPost;
+import com.flintzy.entity.FacebookUser;
 import com.flintzy.repo.FacebookPageRepo;
 import com.flintzy.repo.FacebookPostRepo;
+import com.flintzy.repo.FacebookUserRepo;
 import com.flintzy.security.AESEncryptor;
 
 @Service
 public class FacebookPostingService {
-
+	
+	@Autowired
+    private FacebookUserRepo facebookUserRepo;
     @Autowired
     private FacebookPageRepo pageRepo;
 
     @Autowired
     private FacebookPostRepo postRepo;
-
+    
     @Autowired
     private FacebookTokenService tokenService;
+ 
 
 
     public Map<String, Object> publishTextPost(String pageId, String message) throws Exception {
@@ -36,14 +43,15 @@ public class FacebookPostingService {
         FacebookPage page = pageRepo.findById(pageId)
                 .orElseThrow(() -> new RuntimeException("Page not found"));
 
-  
-        if (tokenService.isTokenExpired(page)) {
-            throw new RuntimeException("Facebook token expired. Please reconnect Facebook.");
+        FacebookUser fbUser = facebookUserRepo.findByFacebookUserId(page.getFacebookUserId());
+
+        if (tokenService.isUserTokenExpired(fbUser)) {
+            throw new RuntimeException("Facebook session expired. Please login again.");
         }
 
         String token = AESEncryptor.decrypt(page.getAccessToken());
         RestTemplate rest = new RestTemplate();
-
+        System.out.println(message);
         String url = "https://graph.facebook.com/" + pageId +
                 "/feed?message=" + message +
                 "&access_token=" + token;
@@ -54,7 +62,6 @@ public class FacebookPostingService {
         FacebookPost post = new FacebookPost();
         post.setPageId(pageId);
         post.setAppUserId(page.getAppUserId());
-        post.setFacebookPostId(page.getFacebookUserId());
         post.setCaption(message);
         post.setFacebookPostId((String) res.get("id"));
         post.setMediaType("TEXT");
@@ -71,10 +78,12 @@ public class FacebookPostingService {
 
         FacebookPage page = pageRepo.findById(pageId)
                 .orElseThrow(() -> new RuntimeException("Page not found"));
-        if (tokenService.isTokenExpired(page)) {
-            throw new RuntimeException("Facebook token expired. Please reconnect Facebook.");
-        }
+       
+        FacebookUser fbUser = facebookUserRepo.findByFacebookUserId(page.getFacebookUserId());
 
+        if (tokenService.isUserTokenExpired(fbUser)) {
+            throw new RuntimeException("Facebook session expired. Please login again.");
+        }
         String token = AESEncryptor.decrypt(page.getAccessToken());
 
         RestTemplate rest = new RestTemplate();

@@ -1,0 +1,5 @@
+package com.flintzy.repo;
+
+public class UserRepo {
+
+}

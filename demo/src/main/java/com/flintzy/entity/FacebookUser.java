@@ -1,6 +1,9 @@
 package com.flintzy.entity;
 
 import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Value;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,7 +23,7 @@ public class FacebookUser {
     @Column(columnDefinition = "TEXT")
     private String accessToken; // ENCRYPTED user access token
 
-    private Long expiresIn;
+    private Long expirySeconds;
 
     private LocalDateTime lastUpdated;
 
