@@ -58,7 +58,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         
 
-        // If token valid → set authentication
         if (email != null) {
 
             UsernamePasswordAuthenticationToken authentication =
