@@ -285,6 +285,91 @@ Authorization: Bearer <JWT>
 POST /facebook/post-image
 Authorization: Bearer <JWT>
 ```
+📡 Facebook Graph API Integration (Implemented)
+
+This backend fully integrates Facebook Graph API as required in the assignment.
+All features — login, page linking, and post publishing — are handled using secure Graph API calls from the backend.
+
+Below is a clear mapping of the Graph API endpoints used and the backend methods that call them.
+
+🔗 Graph API Endpoints Used in This Project
+
+### 1️⃣ Facebook OAuth Login — Authenticate User
+Used to authenticate Facebook users and obtain a User Access Token.
+
+GET https://www.facebook.com/v19.0/dialog/oauth
+    ?client_id=YOUR_APP_ID
+    &redirect_uri=http://localhost:8080/facebook/callback
+    &scope=public_profile,email,pages_manage_posts,pages_read_engagement,pages_show_list
+    &state=APP_USER_ID
+
+### Code Reference
+
+FacebookController.facebookLogin()
+
+### 2️⃣ Exchange Code → Facebook User Access Token
+
+After Facebook redirects to /facebook/callback, the backend exchanges the code for a token.
+
+GET https://graph.facebook.com/v19.0/oauth/access_token
+    ?client_id=YOUR_APP_ID
+    &redirect_uri=http://localhost:8080/facebook/callback
+    &client_secret=YOUR_APP_SECRET
+    &code=AUTHORIZATION_CODE
+
+### Code Reference
+
+FacebookController.facebookCallback()
+
+### 3️⃣ Fetch Facebook User Details (id, name, email)
+
+Your code calls /me without version, so the default Graph API version is used.
+
+GET https://graph.facebook.com/me?fields=id,name,email&access_token=USER_ACCESS_TOKEN
+
+### Code Reference
+
+FacebookController.facebookCallback()
+
+
+### 4️⃣ Fetch Facebook Pages Managed by User
+
+Retrieve all Facebook Pages that the authenticated user can manage.
+
+GET https://graph.facebook.com/me/accounts?access_token=USER_ACCESS_TOKEN
+
+Returns Page ID, Page Name & Page Access Token.
+
+### Code Reference:
+FacebookController.getPages()
+
+### 5️⃣ Publish Text Post to Facebook Page
+
+Used to publish text posts to a Page.
+
+POST https://graph.facebook.com/{PAGE_ID}/feed
+
+Query Params:
+
+message=YOUR_MESSAGE
+access_token=PAGE_ACCESS_TOKEN
+
+
+### Code Reference:
+FacebookPostingService.publishTextPost()
+
+### 6️⃣ Publish Image Post to Facebook Page
+POST https://graph.facebook.com/{PAGE_ID}/photos
+
+### Form Data:
+
+file=@image.jpg
+caption=YOUR_CAPTION
+access_token=PAGE_ACCESS_TOKEN
+
+
+### Code Reference:
+FacebookPostingService.publishImagePost()
 
 ---
 
