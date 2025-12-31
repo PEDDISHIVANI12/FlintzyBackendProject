@@ -284,8 +284,14 @@ Authorization: Bearer <JWT>
 ```
 POST /facebook/post-image
 Authorization: Bearer <JWT>
+
+Form Data:
+file=@image.jpg
+caption={YOUR_CAPTION}
+pageId = {pageId}
+
 ```
-📡 Facebook Graph API Integration (Implemented)
+### 📡 Facebook Graph API Integration (Implemented)
 
 This backend fully integrates Facebook Graph API as required in the assignment.
 All features — login, page linking, and post publishing — are handled using secure Graph API calls from the backend.
@@ -296,12 +302,13 @@ Below is a clear mapping of the Graph API endpoints used and the backend methods
 
 ### 1️⃣ Facebook OAuth Login — Authenticate User
 Used to authenticate Facebook users and obtain a User Access Token.
-
+```bash
 GET https://www.facebook.com/v19.0/dialog/oauth
     ?client_id=YOUR_APP_ID
     &redirect_uri=http://localhost:8080/facebook/callback
     &scope=public_profile,email,pages_manage_posts,pages_read_engagement,pages_show_list
     &state=APP_USER_ID
+```
 
 ### Code Reference
 
@@ -310,12 +317,13 @@ FacebookController.facebookLogin()
 ### 2️⃣ Exchange Code → Facebook User Access Token
 
 After Facebook redirects to /facebook/callback, the backend exchanges the code for a token.
-
+```bash
 GET https://graph.facebook.com/v19.0/oauth/access_token
     ?client_id=YOUR_APP_ID
     &redirect_uri=http://localhost:8080/facebook/callback
     &client_secret=YOUR_APP_SECRET
     &code=AUTHORIZATION_CODE
+```
 
 ### Code Reference
 
@@ -324,8 +332,9 @@ FacebookController.facebookCallback()
 ### 3️⃣ Fetch Facebook User Details (id, name, email)
 
 Your code calls /me without version, so the default Graph API version is used.
-
+```bash
 GET https://graph.facebook.com/me?fields=id,name,email&access_token=USER_ACCESS_TOKEN
+```
 
 ### Code Reference
 
@@ -335,8 +344,9 @@ FacebookController.facebookCallback()
 ### 4️⃣ Fetch Facebook Pages Managed by User
 
 Retrieve all Facebook Pages that the authenticated user can manage.
-
+```bash
 GET https://graph.facebook.com/me/accounts?access_token=USER_ACCESS_TOKEN
+```
 
 Returns Page ID, Page Name & Page Access Token.
 
@@ -346,21 +356,21 @@ FacebookController.getPages()
 ### 5️⃣ Publish Text Post to Facebook Page
 
 Used to publish text posts to a Page.
-
+```bash
 POST https://graph.facebook.com/{PAGE_ID}/feed
-
+```
 Query Params:
 
 message=YOUR_MESSAGE
 access_token=PAGE_ACCESS_TOKEN
 
-
 ### Code Reference:
 FacebookPostingService.publishTextPost()
 
 ### 6️⃣ Publish Image Post to Facebook Page
+```bash
 POST https://graph.facebook.com/{PAGE_ID}/photos
-
+```
 ### Form Data:
 
 file=@image.jpg
@@ -379,7 +389,11 @@ FacebookPostingService.publishImagePost()
 ```bash
 curl -X GET http://localhost:8080/oauth2/authorization/google
 ```
-
+### Login (Facebook)
+```
+curl -X GET http://localhost:8080/facebook/login \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwc2hpdnJhbWlpdEBnbWFpbC5jb20iLCJpYXQiOjE3NjcxNzA0MTMsImV4cCI6MTc2NzE3NDAxM30.v0I0QvrGkAj0Lj-1FkmZtkw5SkLBf9VNWbvpXZ1KQs0"
+```
 ### Get Pages
 ```bash
 curl -X GET http://localhost:8080/facebook/pages \
@@ -394,17 +408,22 @@ curl -X POST http://localhost:8080/facebook/save-pages \
 -d '{
   "pages": [
     {
-      "pageId": "123",
-      "pageName": "Test Page",
-      "accessToken": "PAGE_ACCESS_TOKEN"
+      "pageId": "{page_Id}",
+      "pageName": "{Page_Name}",
+      "pageAccessToken": "PAGE_ACCESS_TOKEN"
     }
   ]
 }'
 ```
 ### Post Text to Facebook Page
 ```bash
-curl -X POST "http://localhost:8080/facebook/post-text?pageId=123456789&message=Hello+from+Flintzy+Backend!" \
-  -H "Authorization: Bearer <JWT_TOKEN>"
+curl -X POST http://localhost:8080/facebook/post-text \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {JWT_TOKEN}" \
+  -d '{
+    "pageId": "{page_Id}",
+    "message": "{message}"
+  }'
 ```
 ### Post Image to Facebook Page
 ```bash
@@ -413,6 +432,8 @@ curl -X POST http://localhost:8080/facebook/post-image \
   -F "pageId=123456789" \
   -F "file=@/path/to/image.jpg" \
   -F "caption=Posting image from Flintzy Backend"
+```
+---n=Posting image from Flintzy Backend"
 ```
 ---
 
