@@ -495,7 +495,7 @@ The SQL files included in this repository contain:
 No real user data, access tokens, OAuth secrets, or credentials are included.
 All sensitive values have been masked for security reasons.
 
-### Google OAuth Setup (Required)
+### 🔗 Google OAuth Setup (Required)
 1️⃣ Open Google Cloud Console
 
 https://console.cloud.google.com/
@@ -508,14 +508,14 @@ Go to:
 
 APIs & Services → Credentials → Create Credentials → OAuth Client ID
 
-###5️⃣ Add Redirect URI
+### 5️⃣ Add Redirect URI
 http://localhost:8080/login/oauth2/code/google
 
 ### 6️⃣ Add Credentials in Properties
 spring.security.oauth2.client.registration.google.client-id=XXXX
 spring.security.oauth2.client.registration.google.client-secret=XXXX
 
-### 📘 Facebook OAuth Setup (Required)
+### 🔗 Facebook OAuth Setup (Required)
 
 To enable Facebook Login, Page access, and posting via Graph API, you must configure your Facebook App properly.
 
@@ -650,7 +650,7 @@ After approval → redirects to:
 
 /facebook/callback?code=XXXX&state=APP_USER_ID
 
-### 1️⃣1️⃣ Verify Page Access Token
+### Verify Page Access Token
 
 Call:
 
@@ -676,7 +676,7 @@ Store it in DB
 
 Use it for posting
 
-### 1️⃣2️⃣ Facebook Post API Requirements
+### Facebook Post API Requirements
 
 Facebook will allow publishing ONLY IF:
 
