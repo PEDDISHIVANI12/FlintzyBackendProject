@@ -81,23 +81,65 @@ Spring Boot 3, OAuth2, Spring Security, JPA, JWT, AES Encryption
 ## 🔑 OAuth2 Login Flow (Google → Facebook)
 
 ```
-User clicks Login
+Google OAuth2 Login Page opens
         ↓
-Google OAuth2 Login
+User signs in with Google account
         ↓
-/auth/oauth-success
-        ↓ (JWT cookie created)
-User Authenticated
+Google redirects to → /auth/oauth-success
         ↓
-User clicks "Connect Facebook"
+Backend verifies Google account details
         ↓
-Facebook OAuth Login
+If first login → Save user in DB
         ↓
-Facebook callback → /facebook/callback
+Backend generates JWT token
         ↓
-Store token securely
+Backend stores JWT in HttpOnly cookie (JWT_TOKEN)
         ↓
-Redirect to /facebook/pages
+User is now authenticated in backend
+        ↓
+User now accesses → /facebook/login (manually or via UI)
+        ↓
+JwtFilter validates the JWT → user allowed
+        ↓
+Backend redirects user to Facebook OAuth:
+        https://www.facebook.com/v19.0/dialog/oauth?...
+        ↓
+User logs in with Facebook
+        ↓
+Facebook asks permissions:
+        • pages_show_list
+        • pages_read_engagement
+        • pages_manage_posts
+        ↓
+User clicks “Allow”
+        ↓
+Facebook redirects to:
+        /facebook/callback?code=XXXX&state=APP_USER_ID
+        ↓
+Backend exchanges code → Facebook user token
+        ↓
+Backend fetches user details using the token:
+        GET /me?fields=id,name,email
+        ↓
+Backend encrypts token (AES)
+        ↓
+Save FacebookUser to DB
+        ↓
+Redirect user to /facebook/pages
+        ↓
+Backend fetches managed pages:
+        GET /me/accounts
+        ↓
+Return page list to frontend
+        ↓
+User sends selected pages to backend(to save in db)using 
+        POST /facebook/save-pages
+        ↓
+Encrypt & store page access tokens
+        ↓
+User can now publish posts using:
+        /facebook/post-text
+        /facebook/post-image
 ```
 
 ---
@@ -112,12 +154,12 @@ cd flintzy-backend
 
 ### 2️⃣ Configure MySQL
 ```sql
-CREATE DATABASE flintzy_db;
+CREATE DATABASE flintzy;
 ```
 
 ### 3️⃣ Update `application.properties`
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/flintzy_db
+spring.datasource.url=jdbc:mysql://localhost:3306/flintzy
 spring.datasource.username=root
 spring.datasource.password=YOUR_PASSWORD
 
@@ -151,26 +193,40 @@ src/main/java/com/flintzy
 │   ├── SecurityConfig.java
 │   ├── JwtFilter.java
 │   ├── JwtUtil.java
+│   
 │
 ├── controller/
 │   ├── AuthController.java
 │   ├── FacebookController.java
 │
 ├── service/
-│   ├── FacebookPostingService.java
-│   ├── FacebookTokenService.java
+│   ├── FacebookPostingService.java     
+│   ├── FacebookTokenService.java       
+|               
+│
+├── dto/
+│   ├── FacebookPageDTO.java            
+│   ├── FacebookPageRequest.java       
+│   ├── PostRequest.java                
+│   ├── JwtResponse.java               
 │
 ├── entity/
 │   ├── User.java
-│   ├── FacebookUser.java
-│   ├── FacebookPage.java
-│   ├── FacebookPost.java
+│   ├── FacebookUser.java               
+│   ├── FacebookPage.java               
+│   ├── FacebookPost.java               
 │
 ├── repo/
 │   ├── UserRepo.java
 │   ├── FacebookUserRepo.java
 │   ├── FacebookPageRepo.java
 │   ├── FacebookPostRepo.java
+|
+├── security/
+│   ├── AESEncryptor.java
+│
+└── FlintzyBackendApplication.java
+
 
 
 ```
@@ -197,11 +253,13 @@ GET /oauth2/authorization/google
 ### 🔹 Facebook Login
 ```
 GET /facebook/login
+Authorization: Bearer <JWT>
 ```
 
 ### 🔹 Facebook Callback
 ```
 GET /facebook/callback?code=xxxx&state=APP_USER_ID
+Authorization: Bearer <JWT>
 ```
 
 ### 🔹 Get Facebook Pages
@@ -258,7 +316,7 @@ curl -X POST http://localhost:8080/facebook/save-pages \
   ]
 }'
 ```
-### Post Image to Facebook Page
+### Post Text to Facebook Page
 ```bash
 curl -X POST "http://localhost:8080/facebook/post-text?pageId=123456789&message=Hello+from+Flintzy+Backend!" \
   -H "Authorization: Bearer <JWT_TOKEN>"
@@ -331,4 +389,201 @@ The SQL files included in this repository contain:
 
 No real user data, access tokens, OAuth secrets, or credentials are included.
 All sensitive values have been masked for security reasons.
+
+### Google OAuth Setup (Required)
+1️⃣ Open Google Cloud Console
+
+https://console.cloud.google.com/
+
+### 2️⃣ Create Project → Enable OAuth APIs
+### 3️⃣ Configure OAuth Consent Screen
+### 4️⃣ Create OAuth Client Credentials
+
+Go to:
+
+APIs & Services → Credentials → Create Credentials → OAuth Client ID
+
+###5️⃣ Add Redirect URI
+http://localhost:8080/login/oauth2/code/google
+
+### 6️⃣ Add Credentials in Properties
+spring.security.oauth2.client.registration.google.client-id=XXXX
+spring.security.oauth2.client.registration.google.client-secret=XXXX
+
+### 📘 Facebook OAuth Setup (Required)
+
+To enable Facebook Login, Page access, and posting via Graph API, you must configure your Facebook App properly.
+
+### 1️⃣ Create a Facebook Developer Account
+
+If you haven’t registered:
+
+🔗 https://developers.facebook.com/
+
+Click "Get Started" → Continue → Verify account.
+
+### 2️⃣ Create a New App
+
+Go to 👉 https://developers.facebook.com/apps
+
+Click Create App
+Select “Other”
+App Type → Business
+Enter:
+App Name
+Contact Email
+Create App
+
+### 3️⃣ Add Product → Facebook Login
+
+In the left menu → Add Product
+Choose Facebook Login
+Select platform → Web
+Enter Site URL:
+http://localhost:8080
+
+### 4️⃣ Add Valid OAuth Redirect URIs
+
+Navigate:
+Facebook Login → Settings
+Add the following:
+http://localhost:8080/facebook/callback
+http://localhost:8080/login/oauth2/code/facebook
+
+
+### Required
+Your backend uses facebook.redirect.uri=http://localhost:8080/facebook/callback
+so it must be added here.
+
+### 5️⃣ Set App Domains
+
+Go to: Settings → Basic
+
+Add:
+
+localhost
+
+
+Note: Must have a top-level domain.
+For local dev, just localhost is allowed.
+
+### 6️⃣ Add Privacy Policy URL (Required)
+
+Facebook requires a valid URL.
+For development, you can use a temporary free URL:
+
+https://example.com/privacy
+
+
+or create one using GitHub Pages, Netlify, Vercel, etc.
+
+### 7️⃣ Get App Credentials
+
+From Settings → Basic:
+
+App ID
+
+App Secret
+
+Add them into your application.properties:
+
+facebook.app.id=YOUR_APP_ID
+facebook.app.secret=YOUR_APP_SECRET
+facebook.redirect.uri=http://localhost:8080/facebook/callback
+facebook.api.version=v19.0
+
+### 8️⃣ Add Required Permissions for Posting
+
+Go to:
+App → App Review → Permissions & Features
+
+Search and enable these (Standard Access is enough):
+
+Required permissions
+Permission	Purpose
+pages_show_list	Fetch pages
+pages_read_engagement	Read page details
+pages_manage_posts	Publish page posts
+
+All three must show:
+
+Status: Ready to Use (0)
+Access Level: Standard Access
+
+### 9️⃣ Test User Setup
+
+Go to → Roles → Test Users
+
+Add a test user
+
+Login with this test user on Facebook
+
+Assign this user as:
+
+Admin of the test Page
+
+Tester of the App
+
+⚠️ This step is required for publishing posts during development.
+
+### 🔟 Testing Facebook Login
+
+When your backend calls:
+
+GET /facebook/login
+
+
+The user should see:
+
+Facebook login screen
+
+Permission dialog
+
+Page selection list
+
+After approval → redirects to:
+
+/facebook/callback?code=XXXX&state=APP_USER_ID
+
+### 1️⃣1️⃣ Verify Page Access Token
+
+Call:
+
+GET https://graph.facebook.com/me/accounts?access_token=USER_ACCESS_TOKEN
+
+
+You should receive:
+
+[
+  {
+    "id": "PAGE_ID",
+    "name": "Page Name",
+    "access_token": "PAGE_ACCESS_TOKEN"
+  }
+]
+
+
+Your backend will:
+
+Encrypt PAGE_ACCESS_TOKEN
+
+Store it in DB
+
+Use it for posting
+
+### 1️⃣2️⃣ Facebook Post API Requirements
+
+Facebook will allow publishing ONLY IF:
+
+Token belongs to a user who is admin of the Page
+
+Permissions granted:
+
+### pages_manage_posts
+
+### pages_read_engagement
+
+### Token is a Page Access Token, NOT User token
+
+### 🎉 Facebook OAuth Setup Completed
 
