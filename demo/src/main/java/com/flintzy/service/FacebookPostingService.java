@@ -57,7 +57,6 @@ public class FacebookPostingService {
 
         Map res = rest.postForObject(url, null, Map.class);
 
-        // Save post history
         FacebookPost post = new FacebookPost();
         post.setPageId(pageId);
         post.setFacebookUserId(page.getFacebookUserId());
@@ -104,7 +103,6 @@ public class FacebookPostingService {
 
         Map response = rest.postForObject(url, request, Map.class);
 
-        // Save post history
         FacebookPost post = new FacebookPost();
         post.setPageId(pageId);
         post.setAppUserId(page.getAppUserId());
