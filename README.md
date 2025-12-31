@@ -272,6 +272,15 @@ Authorization: Bearer <JWT>
 ```
 POST /facebook/save-pages
 Authorization: Bearer <JWT>
+{
+  "pages": [
+    {
+      "pageId": "{page_ID}",
+      "pageName": "{page_Name}",
+"pageaccessToken":"EAAMfSryNf0sBQWjMfuZBY2JJnyZAzLUyMtcWD3J2CxS89lbbuOluLJK4XoU2O40ArUxRqQkUFoMzJhkZBkWesAjRzx2I4055MvyhyaIuqsoiybFQCYYkU9Vm6Xp2StJcDrLQ251tzmRJ6zR805ZBwm3ssdTA8Uuyhd1x4tTfuPV4UEGHag6gYhZAt9DSb8ICl1uCD"
+    }
+  ]
+}
 ```
 
 ### 🔹 Post Text
