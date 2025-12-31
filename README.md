@@ -433,11 +433,10 @@ curl -X POST http://localhost:8080/facebook/post-image \
   -F "file=@/path/to/image.jpg" \
   -F "caption=Posting image from Flintzy Backend"
 ```
----n=Posting image from Flintzy Backend"
-```
+---
 ---
 
- Database Schema
+### Database Schema
 
 ### 🧑 User
 | Field       | Type    |
