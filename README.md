@@ -166,7 +166,7 @@ spring.datasource.password=YOUR_PASSWORD
 facebook.app.id=YOUR_APP_ID
 facebook.app.secret=YOUR_APP_SECRET
 facebook.redirect.uri=http://localhost:8080/facebook/callback
-facebook.api.version=v19.0
+facebook.api.version=v24.0
 
 jwt.secret=GENERATE_32_BYTE_SECRET
 ```
