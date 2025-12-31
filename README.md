@@ -392,7 +392,7 @@ curl -X GET http://localhost:8080/oauth2/authorization/google
 ### Login (Facebook)
 ```
 curl -X GET http://localhost:8080/facebook/login \
--H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwc2hpdnJhbWlpdEBnbWFpbC5jb20iLCJpYXQiOjE3NjcxNzA0MTMsImV4cCI6MTc2NzE3NDAxM30.v0I0QvrGkAj0Lj-1FkmZtkw5SkLBf9VNWbvpXZ1KQs0"
+-H "Authorization: Bearer <JWT>"
 ```
 ### Get Pages
 ```bash
