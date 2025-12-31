@@ -277,7 +277,7 @@ Authorization: Bearer <JWT>
     {
       "pageId": "{page_ID}",
       "pageName": "{page_Name}",
-"pageaccessToken":"EAAMfSryNf0sBQWjMfuZBY2JJnyZAzLUyMtcWD3J2CxS89lbbuOluLJK4XoU2O40ArUxRqQkUFoMzJhkZBkWesAjRzx2I4055MvyhyaIuqsoiybFQCYYkU9Vm6Xp2StJcDrLQ251tzmRJ6zR805ZBwm3ssdTA8Uuyhd1x4tTfuPV4UEGHag6gYhZAt9DSb8ICl1uCD"
+      "pageaccessToken":"{page_access_token}"
     }
   ]
 }
@@ -495,7 +495,7 @@ curl -X POST http://localhost:8080/facebook/post-image \
 | createdAt        | DATETIME   |
 
 ---
-### ⚠ Database Dump Notice
+## ⚠ Database Dump Notice
 
 The SQL files included in this repository contain:
 - Full database schema
@@ -505,7 +505,7 @@ No real user data, access tokens, OAuth secrets, or credentials are included.
 All sensitive values have been masked for security reasons.
 
 ---
-### 🔗 Google OAuth Setup (Required)
+## 🔗 Google OAuth Setup (Required)
 1️⃣ Open Google Cloud Console
 
 https://console.cloud.google.com/
@@ -526,7 +526,7 @@ spring.security.oauth2.client.registration.google.client-id=XXXX
 spring.security.oauth2.client.registration.google.client-secret=XXXX
 
 ---
-### 🔗 Facebook OAuth Setup (Required)
+## 🔗 Facebook OAuth Setup (Required)
 
 To enable Facebook Login, Page access, and posting via Graph API, you must configure your Facebook App properly.
 
