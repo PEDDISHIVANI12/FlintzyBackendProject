@@ -300,9 +300,10 @@ caption={YOUR_CAPTION}
 pageId = {pageId}
 
 ```
+---
 ### 📡 Facebook Graph API Integration (Implemented)
 
-This backend fully integrates Facebook Graph API as required in the assignment.
+This backend fully integrates Facebook Graph API.
 All features — login, page linking, and post publishing — are handled using secure Graph API calls from the backend.
 
 Below is a clear mapping of the Graph API endpoints used and the backend methods that call them.
@@ -443,7 +444,6 @@ curl -X POST http://localhost:8080/facebook/post-image \
   -F "caption=Posting image from Flintzy Backend"
 ```
 ---
----
 
 ### Database Schema
 
@@ -494,7 +494,7 @@ curl -X POST http://localhost:8080/facebook/post-image \
 | mediaType        | VARCHAR     |
 | createdAt        | DATETIME   |
 
-
+---
 ### ⚠ Database Dump Notice
 
 The SQL files included in this repository contain:
@@ -504,6 +504,7 @@ The SQL files included in this repository contain:
 No real user data, access tokens, OAuth secrets, or credentials are included.
 All sensitive values have been masked for security reasons.
 
+---
 ### 🔗 Google OAuth Setup (Required)
 1️⃣ Open Google Cloud Console
 
@@ -524,6 +525,7 @@ http://localhost:8080/login/oauth2/code/google
 spring.security.oauth2.client.registration.google.client-id=XXXX
 spring.security.oauth2.client.registration.google.client-secret=XXXX
 
+---
 ### 🔗 Facebook OAuth Setup (Required)
 
 To enable Facebook Login, Page access, and posting via Graph API, you must configure your Facebook App properly.
@@ -564,8 +566,8 @@ Add the following:
 http://localhost:8080/facebook/callback
 http://localhost:8080/login/oauth2/code/facebook
 
-
 ### Required
+
 Your backend uses facebook.redirect.uri=http://localhost:8080/facebook/callback
 so it must be added here.
 
@@ -574,9 +576,7 @@ so it must be added here.
 Go to: Settings → Basic
 
 Add:
-
 localhost
-
 
 Note: Must have a top-level domain.
 For local dev, just localhost is allowed.
@@ -587,18 +587,13 @@ Facebook requires a valid URL.
 For development, you can use a temporary free URL:
 
 https://example.com/privacy
-
-
 or create one using GitHub Pages, Netlify, Vercel, etc.
 
 ### 7️⃣ Get App Credentials
 
 From Settings → Basic:
-
 App ID
-
 App Secret
-
 Add them into your application.properties:
 
 facebook.app.id=YOUR_APP_ID
@@ -610,7 +605,6 @@ facebook.api.version=v19.0
 
 Go to:
 App → App Review → Permissions & Features
-
 Search and enable these (Standard Access is enough):
 
 Required permissions
@@ -627,15 +621,10 @@ Access Level: Standard Access
 ### 9️⃣ Test User Setup
 
 Go to → Roles → Test Users
-
 Add a test user
-
 Login with this test user on Facebook
-
 Assign this user as:
-
 Admin of the test Page
-
 Tester of the App
 
 ⚠️ This step is required for publishing posts during development.
@@ -646,17 +635,11 @@ When your backend calls:
 
 GET /facebook/login
 
-
 The user should see:
-
 Facebook login screen
-
 Permission dialog
-
 Page selection list
-
 After approval → redirects to:
-
 /facebook/callback?code=XXXX&state=APP_USER_ID
 
 ### Verify Page Access Token
@@ -664,8 +647,6 @@ After approval → redirects to:
 Call:
 
 GET https://graph.facebook.com/me/accounts?access_token=USER_ACCESS_TOKEN
-
-
 You should receive:
 
 [
@@ -675,29 +656,19 @@ You should receive:
     "access_token": "PAGE_ACCESS_TOKEN"
   }
 ]
-
-
 Your backend will:
-
 Encrypt PAGE_ACCESS_TOKEN
-
 Store it in DB
-
 Use it for posting
 
 ### Facebook Post API Requirements
 
 Facebook will allow publishing ONLY IF:
-
 Token belongs to a user who is admin of the Page
-
 Permissions granted:
-
-### pages_manage_posts
-
-### pages_read_engagement
-
-### Token is a Page Access Token, NOT User token
+pages_manage_posts
+pages_read_engagement
+Token is a Page Access Token, NOT User token
 
 ### 🎉 Facebook OAuth Setup Completed
 
